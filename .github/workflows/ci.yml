@@ -669,6 +669,7 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           NEEDS_FULL_SETUP: ${{ matrix.needs_full_setup }}
         run: |
+          sudo systemctl start mysql || true
           # Artifacts directory must be created after composer install as it would remove the artifacts directory
           # This seems a bit strange, if you need to add an artifact at an earlier stage then revalidate that
           # composer install does actually remove the artifact directory
