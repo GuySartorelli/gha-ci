@@ -669,7 +669,6 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           NEEDS_FULL_SETUP: ${{ matrix.needs_full_setup }}
         run: |
-          sudo systemctl start mysql || true
           # Artifacts directory must be created after composer install as it would remove the artifacts directory
           # This seems a bit strange, if you need to add an artifact at an earlier stage then revalidate that
           # composer install does actually remove the artifact directory
@@ -683,16 +682,16 @@ jobs:
             # each newline in the .env file
             if [[ "${{ matrix.db }}" =~ mysql ]]; then
               if [[ "${{ matrix.db }}" == "mysql57pdo" ]]; then
-                echo "mysql version":
-                mysql --port=3357 --user=root --password=root --execute="SELECT VERSION();" || true
+                # echo "mysql version":
+                # mysql --port=3357 --user=root --password=root --execute="SELECT VERSION();" || true
                 cat << EOF > .env
           SS_DATABASE_CLASS="MySQLPDODatabase"
           SS_DATABASE_PORT="3357"
           EOF
               else
                 MYSQL_PORT=${{ matrix.db == 'mysql57' && '3357' || '3380' }}
-                echo "mysql version":
-                mysql --user=root --password=root --port=$MYSQL_PORT --execute="SELECT VERSION();" || true
+                # echo "mysql version":
+                # mysql --user=root --password=root --port=$MYSQL_PORT --execute="SELECT VERSION();" || true
                 cat << EOF > .env
           SS_DATABASE_CLASS="MySQLDatabase"
           SS_DATABASE_PORT="${MYSQL_PORT}"
@@ -719,8 +718,19 @@ jobs:
           SS_SQLITE_DATABASE_PATH=":memory:"
           EOF
             elif [[ "${{ matrix.db }}" =~ mariadb ]]; then
-              echo "mariadb version":
-              mysql --port=3311 --user=root --password=root --execute="SELECT VERSION();" || true
+              echo "mariadb version:"
+              echo "syntax 1"
+              mysql --host=mariadb --port=3311 --user=root --password=root --execute="SELECT VERSION();" || true
+              echo "syntax 2"
+              mariadb --host=mariadb --port=3311 --user=root --password=root --execute="SELECT VERSION();" || true
+              echo "syntax 3"
+              mysql --host=mariadb --port=3306 --user=root --password=root --execute="SELECT VERSION();" || true
+              echo "syntax 4"
+              mariadb --host=mariadb --port=3306 --user=root --password=root --execute="SELECT VERSION();" || true
+              echo "syntax 5"
+              mysql --host=127.0.0.1 --port=3311 --user=root --password=root --execute="SELECT VERSION();" || true
+              echo "syntax 6"
+              mariadb --host=127.0.0.1 --port=3311 --user=root --password=root --execute="SELECT VERSION();" || true
               cat << EOF > .env
           SS_DATABASE_SERVER="127.0.0.1"
           SS_DATABASE_PORT="3311"
@@ -770,6 +780,15 @@ jobs:
                 - "debug"
           EOF
             fi
+
+            echo "Trying to remove the thing with the charset stuff"
+            cat << EOF >> app/_config/mysite.yml
+          ---
+          Name: myproject
+          ---
+          SilverStripe\Core\Manifest\ModuleManifest:
+            project: app
+          EOF
 
             # run dev/build flush to help debug any issues (though it's not strictly required here)
             # normal module
