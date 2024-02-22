@@ -146,7 +146,7 @@ jobs:
         ports:
           - 5432:5432
       mariadb:
-        image: mariadb:10.11
+        image: mariadb:11.0
         env:
           MARIADB_HOST: 127.0.0.1
           MARIADB_ROOT_PASSWORD: root
@@ -769,15 +769,6 @@ jobs:
                 - "debug"
           EOF
             fi
-
-            echo "Trying to remove the thing with the charset stuff"
-            cat << EOF > app/_config/mysite.yml
-          ---
-          Name: myproject
-          ---
-          SilverStripe\Core\Manifest\ModuleManifest:
-            project: app
-          EOF
 
             # run dev/build flush to help debug any issues (though it's not strictly required here)
             # normal module
