@@ -792,7 +792,7 @@ jobs:
           echo "matrix.phpunit: ${{ matrix.phpunit }}"
 
       - name: Run tests
-        uses: silverstripe/gha-run-tests@v1
+        uses: GuySartorelli/gha-run-tests@forked-for-behat
         with:
           phpunit: ${{ matrix.phpunit }}
           phpunit_suite: ${{ matrix.phpunit_suite }}
