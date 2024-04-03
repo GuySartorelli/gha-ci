@@ -95,7 +95,7 @@ jobs:
     steps:
       - name: Generate matrix
         id: generate-matrix
-        uses: silverstripe/gha-generate-matrix@v1
+        uses: GuySartorelli/gha-generate-matrix@docs-linting
         with:
           composer_install: ${{ inputs.composer_install }}
           extra_jobs: ${{ inputs.extra_jobs }}
@@ -796,7 +796,7 @@ jobs:
           echo "matrix.phpunit: ${{ matrix.phpunit }}"
 
       - name: Run tests
-        uses: silverstripe/gha-run-tests@v1
+        uses: GuySartorelli/gha-run-tests@docs-linting
         with:
           phpunit: ${{ matrix.phpunit }}
           phpunit_suite: ${{ matrix.phpunit_suite }}
